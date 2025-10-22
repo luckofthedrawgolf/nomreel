@@ -1,44 +1,213 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NomReel — Discover Food Through Video</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fffaf7;
-      color: #222;
-      text-align: center;
-      padding: 60px;
-    }
-    h1 {
-      font-size: 48px;
-      color: #ff6f3c;
-    }
-    p {
-      font-size: 20px;
-      max-width: 600px;
-      margin: 20px auto;
-      line-height: 1.6;
-    }
-    button {
-      background: #ff6f3c;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ff865e;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NomReel — Food Videos Near You</title>
+<style>
+  :root {
+    --bg: #0f0f10;
+    --fg: #ffffff;
+    --muted: #b8b8b8;
+    --accent: #ff5530;
+  }
+  html, body {
+    margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: Inter, system-ui, -apple-system, Arial, sans-serif;
+  }
+  /* Fixed top bar */
+  .topbar {
+    position: fixed; inset: 0 0 auto 0; height: 64px; display:flex; gap:12px; align-items:center; padding:0 12px;
+    background: rgba(15,15,16,0.82); backdrop-filter: blur(8px); border-bottom: 1px solid #1d1d1f; z-index:10;
+  }
+  .brand { font-weight: 700; letter-spacing: 0.3px; }
+  .brand b{ color: var(--accent);}
+  .controls{ display:flex; gap:8px; width:100%; max-width:860px; margin-left:auto;}
+  select, input {
+    background:#1a1a1c; color:var(--fg); border:1px solid #2a2a2d; border-radius:10px; padding:10px 12px; outline: none;
+    font-size:14px; width:100%;
+  }
+  .btn {
+    background: var(--accent); border:0; color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
+  }
+
+  /* Vertical snap container */
+  .feed {
+    position: absolute; top:64px; left:0; right:0; bottom:0;
+    overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch;
+  }
+  .card {
+    position: relative; height: calc(100vh - 64px); scroll-snap-align: start;
+    display:flex; align-items:center; justify-content:center; padding:0; border-bottom:1px solid #1d1d1f;
+  }
+  /* Video wrapper maintains phone-vertical aspect */
+  .frame {
+    position:relative; width:min(420px, 92vw); aspect-ratio: 9 / 16; background:#000; border-radius:14px; overflow:hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+  }
+
+  /* Overlay meta */
+  .meta {
+    position:absolute; left:12px; bottom:12px; right:12px; display:flex; justify-content:space-between; gap:10px; align-items:flex-end;
+    color:#fff;
+  }
+  .meta .left {max-width:72%;}
+  .tag {display:inline-block; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px;}
+  .place {font-weight:700; font-size:16px; margin-top:6px;}
+  .addr {font-size:12px; color:#ddd;}
+  .cta {display:flex; gap:6px;}
+  .chip {background: rgba(255,85,48,.9); color:#fff; border:0; padding:8px 10px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px;}
+
+  /* TikTok embed iframe reset */
+  iframe {border:0; width:100%; height:100%;}
+  /* small screens: stack controls */
+  @media (max-width: 640px){
+    .controls {flex-direction:column;}
+  }
+</style>
 </head>
 <body>
-  <h1>🍽️ NomReel</h1>
-  <p>Scroll short food videos. Discover the best eats in your city!</p>
-  <button>Coming Soon</button>
+
+  <div class="topbar">
+    <div class="brand">Nom<b>Reel</b></div>
+    <div class="controls">
+      <select id="city">
+        <option>Denver</option>
+        <option>Austin</option>
+        <option>Nashville</option>
+        <option>Seattle</option>
+      </select>
+      <input id="query" type="text" placeholder="Search food (e.g., ramen, tacos, brunch)" />
+      <button class="btn" id="apply">Search</button>
+    </div>
+  </div>
+
+  <div id="feed" class="feed"></div>
+
+<script>
+/**
+ * Replace these with real clips. Each item:
+ * - city: string
+ * - tags: array of keywords
+ * - title / place / address: metadata overlay
+ * - video: TikTok embed URL or MP4 URL
+ *
+ * TIP: For TikTok, use the embed URL format. Example placeholder below.
+ * You can also use Instagram Reels or your own MP4s hosted on a CDN.
+ */
+const DATA = [
+  {
+    city: "Denver",
+    tags: ["ramen","noodles","japanese"],
+    title: "Tonkotsu Ramen • Pork Chashu",
+    place: "Menya Ramen & Poke",
+    address: "1431 17th St, Denver",
+    // Example TikTok embed (replace with a real one you curate)
+    video: "https://www.tiktok.com/embed/7351111111111111111"
+  },
+  {
+    city: "Denver",
+    tags: ["tacos","mexican","birria"],
+    title: "Birria Tacos Dip • Cheese Pull",
+    place: "Tacos Tequila Whiskey",
+    address: "1514 York St, Denver",
+    video: "https://www.tiktok.com/embed/7352222222222222222"
+  },
+  {
+    city: "Austin",
+    tags: ["bbq","brisket","texas"],
+    title: "Melt-in-Your-Mouth Brisket",
+    place: "Franklin Barbecue",
+    address: "900 E 11th St, Austin",
+    video: "https://www.tiktok.com/embed/7353333333333333333"
+  },
+  {
+    city: "Nashville",
+    tags: ["hot chicken","fried","spicy"],
+    title: "Nashville Hot Chicken • XXX Hot",
+    place: "Hattie B’s",
+    address: "112 19th Ave S, Nashville",
+    video: "https://www.tiktok.com/embed/7354444444444444444"
+  }
+];
+
+const feedEl = document.getElementById('feed');
+const cityEl = document.getElementById('city');
+const queryEl = document.getElementById('query');
+const applyEl = document.getElementById('apply');
+
+// Basic filter + render
+function render() {
+  const city = cityEl.value.trim().toLowerCase();
+  const q = queryEl.value.trim().toLowerCase();
+
+  const results = DATA.filter(item => {
+    const cityOk = item.city.toLowerCase() === city;
+    const qOk = !q || item.tags.join(' ').toLowerCase().includes(q) || item.place.toLowerCase().includes(q) || item.title.toLowerCase().includes(q);
+    return cityOk && qOk;
+  });
+
+  // Build cards
+  feedEl.innerHTML = results.map(item => `
+    <section class="card">
+      <div class="frame">
+        <iframe src="${item.video}" allowfullscreen scrolling="no" loading="lazy"></iframe>
+        <div class="meta">
+          <div class="left">
+            <div>
+              ${item.tags.slice(0,3).map(t=>`<span class="tag">#${t}</span>`).join('')}
+            </div>
+            <div class="place">${item.title}</div>
+            <div class="addr">${item.place} • ${item.address}</div>
+          </div>
+          <div class="cta">
+            <button class="chip" onclick="openMaps('${encodeURIComponent(item.place + ' ' + item.address)}')">Map</button>
+            <button class="chip" onclick="shareClip('${encodeURIComponent(item.title)}')">Share</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `).join('') || emptyState(city, q);
+}
+
+function emptyState(city, q){
+  return `
+    <section class="card" style="justify-content:center; text-align:center;">
+      <div>
+        <h2 style="margin:0 0 6px 0; font-size:22px;">No results yet</h2>
+        <p style="color:var(--muted)">Try another keyword or city. Add more videos to DATA[] to expand the feed.</p>
+      </div>
+    </section>
+  `;
+}
+
+function openMaps(query){
+  const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  window.open(url, '_blank');
+}
+function shareClip(title){
+  if (navigator.share){
+    navigator.share({ title: `NomReel • ${decodeURIComponent(title)}`, url: location.href }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(location.href);
+    alert("Link copied!");
+  }
+}
+
+// Allow query params like ?city=Denver&q=tacos
+(function initFromQuery(){
+  const params = new URLSearchParams(location.search);
+  const c = params.get('city'); const q = params.get('q');
+  if (c) cityEl.value = c;
+  if (q) queryEl.value = q;
+})();
+
+applyEl.addEventListener('click', render);
+cityEl.addEventListener('change', render);
+queryEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
+
+// initial render
+render();
+</script>
 </body>
 </html>
