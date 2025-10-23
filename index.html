@@ -1,276 +1,117 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NomReel — Food Videos Near You</title>
-<style>
-  :root {
-    --bg: #0f0f10;
-    --fg: #ffffff;
-    --muted: #b8b8b8;
-    --accent: #ff5530;
-  }
-  html, body {
-    margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: Inter, system-ui, -apple-system, Arial, sans-serif;
-  }
-  /* Fixed top bar */
-/* Fixed top bar */
-.topbar {
-  position: fixed;
-  height: auto;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  background: rgba(15,15,16,0.82);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #1d1d1f;
-  z-index: 10;
-}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NomReel – Food Videos Near You</title>
+  <style>
+    :root {
+      --bg: #0f0f10;
+      --fg: #ffffff;
+      --muted: #8b8b8b;
+      --accent: #ff5530;
+    }
 
-/* space below fixed header */
-body {
-  padding-top: 64px;
-}
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: Inter, system-ui, -apple-system, Arial, sans-serif;
+      overflow: hidden;
+    }
 
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(15,15,16,0.82);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1d1d1f;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-.brand {
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-.brand b {
-  color: var(--accent);
-}
+    .brand {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--accent);
+    }
 
-.controls {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 860px;
-  margin: 0 auto 16px auto;
-  z-index: 1;
-}
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-select,
-input {
-  background: #1a1a1c;
-  color: var(--fg);
-  border: 1px solid #2a2a2d;
-  border-radius: 10px;
-  padding: 10px 12px;
-  outline: none;
-  font-size: 14px;
-  width: 100%;
-}
+    select, input[type="text"] {
+      background: #1a1a1c;
+      color: var(--fg);
+      border: 1px solid #2a2a2d;
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+    }
 
-/* Responsive stack on mobile */
-@media (max-width: 640px) {
-  .controls {
-    flex-direction: column;
-  }
-}
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
 
-/* Feed padding to avoid UI overlap */
-#feed {
-  padding-top: 16px;
-  position: relative;
-  z-index: 0;
-}
+    main {
+      position: absolute;
+      top: 100px; /* enough space for the topbar */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+    }
 
+    .video {
+      height: 100vh;
+      scroll-snap-align: start;
+    }
 
-  .btn {
-    background: var(--accent); border:0; color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
-  }
-
-  /* Vertical snap container */
-  .feed {
-    position: absolute; top:64px; left:0; right:0; bottom:0;
-    overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch;
-  }
-  .card {
-    position: relative; height: calc(100vh - 64px); scroll-snap-align: start;
-    display:flex; align-items:center; justify-content:center; padding:0; border-bottom:1px solid #1d1d1f;
-  }
-  /* Video wrapper maintains phone-vertical aspect */
-  .frame {
-    position:relative; width:min(420px, 92vw); aspect-ratio: 9 / 16; background:#000; border-radius:14px; overflow:hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.45);
-  }
-
-  /* Overlay meta */
-  .meta {
-    position:absolute; left:12px; bottom:12px; right:12px; display:flex; justify-content:space-between; gap:10px; align-items:flex-end;
-    color:#fff;
-  }
-  .meta .left {max-width:72%;}
-  .tag {display:inline-block; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:999px; font-size:12px; margin-right:6px;}
-  .place {font-weight:700; font-size:16px; margin-top:6px;}
-  .addr {font-size:12px; color:#ddd;}
-  .cta {display:flex; gap:6px;}
-  .chip {background: rgba(255,85,48,.9); color:#fff; border:0; padding:8px 10px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px;}
-
-  /* TikTok embed iframe reset */
-  iframe {border:0; width:100%; height:100%;}
-  /* small screens: stack controls */
-  @media (max-width: 640px){
-    .controls {flex-direction:column;}
-  }
-  /* TEMP FIX: push city dropdown below header */
-/* TEMP FIX: push city dropdown below header */
-#city {
-  display: block;
-  width: 100%;
-}
-
-
-
-</style>
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-
   <div class="topbar">
-    <div class="brand">Nom<b>Reel</b></div>
+    <div class="brand">Nom<span style="color: var(--fg)">Reel</span></div>
     <div class="controls">
       <select id="city">
-        <option>Denver</option>
-        <option>Austin</option>
-        <option>Nashville</option>
-        <option>Seattle</option>
+        <option value="Denver">Denver</option>
+        <option value="LA">Los Angeles</option>
       </select>
-      <input id="query" type="text" placeholder="Search food (e.g., ramen, tacos, brunch)" />
-      <button class="btn" id="apply">Search</button>
+      <input type="text" placeholder="Search food (e.g., ramen, tacos, brunch)" />
+      <button>Search</button>
     </div>
   </div>
 
-  <div id="feed" class="feed"></div>
-
-<script>
-/**
- * Replace these with real clips. Each item:
- * - city: string
- * - tags: array of keywords
- * - title / place / address: metadata overlay
- * - video: TikTok embed URL or MP4 URL
- *
- * TIP: For TikTok, use the embed URL format. Example placeholder below.
- * You can also use Instagram Reels or your own MP4s hosted on a CDN.
- */
-const DATA = [
- {
-  city: "Denver",
-  tags: ["breakfast burrito","bbq","denverfood"],
-  title: "Breakfast Burrito — SMOK Barbecue",
-  place: "SMOK Barbecue",
-  address: "Denver, CO",
-  video: "https://www.tiktok.com/embed/7328783032532569390"
-},
- {
-  city: "Denver",
-  tags: ["tacos","mexicanfood","foodreview","colorado","denver"],
-  title: "Family-Run Taco Spot",
-  place: "Unknown (featured by The Taco Fiend)",
-  address: "Denver, CO",
-  video: "https://www.tiktok.com/embed/7469144267508780330"
-},
-
-  {
-    city: "Austin",
-    tags: ["bbq","brisket","texas"],
-    title: "Melt-in-Your-Mouth Brisket",
-    place: "Franklin Barbecue",
-    address: "900 E 11th St, Austin",
-    video: "https://www.tiktok.com/embed/7353333333333333333"
-  },
-  {
-    city: "Nashville",
-    tags: ["hot chicken","fried","spicy"],
-    title: "Nashville Hot Chicken • XXX Hot",
-    place: "Hattie B’s",
-    address: "112 19th Ave S, Nashville",
-    video: "https://www.tiktok.com/embed/7354444444444444444"
-  }
-];
-
-const feedEl = document.getElementById('feed');
-const cityEl = document.getElementById('city');
-const queryEl = document.getElementById('query');
-const applyEl = document.getElementById('apply');
-
-// Basic filter + render
-function render() {
-  const city = cityEl.value.trim().toLowerCase();
-  const q = queryEl.value.trim().toLowerCase();
-
-  const results = DATA.filter(item => {
-    const cityOk = item.city.toLowerCase() === city;
-    const qOk = !q || item.tags.join(' ').toLowerCase().includes(q) || item.place.toLowerCase().includes(q) || item.title.toLowerCase().includes(q);
-    return cityOk && qOk;
-  });
-
-  // Build cards
-  feedEl.innerHTML = results.map(item => `
-    <section class="card">
-      <div class="frame">
-        <iframe src="${item.video}" allowfullscreen scrolling="no" loading="lazy"></iframe>
-        <div class="meta">
-          <div class="left">
-            <div>
-              ${item.tags.slice(0,3).map(t=>`<span class="tag">#${t}</span>`).join('')}
-            </div>
-            <div class="place">${item.title}</div>
-            <div class="addr">${item.place} • ${item.address}</div>
-          </div>
-          <div class="cta">
-            <button class="chip" onclick="openMaps('${encodeURIComponent(item.place + ' ' + item.address)}')">Map</button>
-            <button class="chip" onclick="shareClip('${encodeURIComponent(item.title)}')">Share</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  `).join('') || emptyState(city, q);
-}
-
-function emptyState(city, q){
-  return `
-    <section class="card" style="justify-content:center; text-align:center;">
-      <div>
-        <h2 style="margin:0 0 6px 0; font-size:22px;">No results yet</h2>
-        <p style="color:var(--muted)">Try another keyword or city. Add more videos to DATA[] to expand the feed.</p>
-      </div>
-    </section>
-  `;
-}
-
-function openMaps(query){
-  const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
-  window.open(url, '_blank');
-}
-function shareClip(title){
-  if (navigator.share){
-    navigator.share({ title: `NomReel • ${decodeURIComponent(title)}`, url: location.href }).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(location.href);
-    alert("Link copied!");
-  }
-}
-
-// Allow query params like ?city=Denver&q=tacos
-(function initFromQuery(){
-  const params = new URLSearchParams(location.search);
-  const c = params.get('city'); const q = params.get('q');
-  if (c) cityEl.value = c;
-  if (q) queryEl.value = q;
-})();
-
-applyEl.addEventListener('click', render);
-cityEl.addEventListener('change', render);
-queryEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
-
-// initial render
-render();
-</script>
+  <main>
+    <div class="video">
+      <iframe src="https://www.tiktok.com/embed/7295672507794289952" allowfullscreen></iframe>
+    </div>
+    <div class="video">
+      <iframe src="https://www.tiktok.com/embed/7292758668573338910" allowfullscreen></iframe>
+    </div>
+  </main>
 </body>
 </html>
