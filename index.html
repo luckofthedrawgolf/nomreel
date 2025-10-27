@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>NomReel — Local food reels</title>
   <link rel="icon" href="./assets/favicon.png" />
   <link rel="stylesheet" href="./src/styles.css" />
@@ -10,36 +10,27 @@
   <script async src="https://www.tiktok.com/embed.js"></script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <img src="./assets/logo.svg" alt="NomReel" class="logo"/>
-      <span class="wordmark">Nom<span class="accent">Reel</span></span>
-    </div>
-    <p class="tagline">Discover your next meal through real food reels. Local videos, local flavor.</p>
-  </header>
-
-  <!-- Small fixed city badge (optional) -->
+  <!-- Tiny overlay label so header doesn't steal vertical space -->
   <div id="cityBadge" class="city-badge">Billings • NomReel</div>
 
-  <section class="searchbar">
-    <div class="controls">
-      <select id="citySelect" aria-label="City">
-        <option>Billings</option>
-        <option>Bozeman</option>
-        <option selected>Denver</option>
-      </select>
-      <input id="queryInput" type="search" placeholder="Search food (e.g., ramen, tacos, brunch)" />
-      <button id="searchBtn">Search</button>
-    </div>
+  <!-- Controls (overlay) -->
+  <section class="controls-overlay">
+    <select id="citySelect" aria-label="City">
+      <option selected>Billings</option>
+      <option>Bozeman</option>
+      <option>Denver</option>
+    </select>
+    <input id="queryInput" type="search" placeholder="Search food (e.g., tacos, ramen)" />
+    <button id="searchBtn">Search</button>
   </section>
 
   <!-- FULL-SCREEN SNAP SCROLLER -->
-  <main id="feed" class="feed snap-container">
+  <main id="feed" class="snap-container">
     <!-- Slides injected by app.js -->
   </main>
 
   <footer class="site-footer">
-    <p>© <span id="year"></span> NomReel • Curated TikTok embeds. Creators credited.</p>
+    <p>© <span id="year"></span> NomReel • TikTok embeds credited to original creators.</p>
   </footer>
 
   <script type="module" src="./src/app.js"></script>
