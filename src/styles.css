@@ -62,3 +62,46 @@ button#searchBtn:hover { filter: brightness(1.05); }
   .actions { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ===== TikTok-like snap scroll ===== */
+html, body { height: 100%; overscroll-behavior-y: none; }
+body { touch-action: pan-y; }
+
+.snap-container {
+  height: 100vh;                 /* Full-screen viewport */
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: y mandatory; /* The magic */
+  scroll-behavior: smooth;
+  background: var(--bg);
+}
+
+/* Each card is a full-screen slide */
+.card.snap-slide {
+  height: 100vh;
+  scroll-snap-align: start;
+  border-radius: 0;              /* full bleed feel */
+  border: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;           /* center the embed */
+  justify-content: center;
+  background: var(--bg);
+  box-shadow: none;
+}
+
+/* Keep the embed nicely sized on phone */
+.card .tiktok-embed { 
+  width: 100%;
+  max-width: 480px;              /* tighten on mobile */
+  min-width: 320px;
+}
+
+/* Action bar under each video */
+.card .card-body {
+  width: 100%;
+  max-width: 480px;
+  margin: 8px auto 18px;
+  padding: 0 10px;
+}
+
+.actions { margin-top: 10px; }
