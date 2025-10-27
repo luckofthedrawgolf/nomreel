@@ -1,1 +1,21 @@
+[
+  {
+    "id": "1",
+    "city": "Denver",
+    "restaurant": "Smok Barbecue",
+    "title": "Insane breakfast burrito",
+    "tiktokUrl": "https://www.tiktok.com/@blondeswhoeat/video/7469144267508780330",
+    "creator": "@blondeswhoeat",
+    "tags": ["breakfast", "burrito", "barbecue"]
+  },
+  {
+    "id": "2",
+    "city": "Billings",
+    "restaurant": "The Burger Dive",
+    "title": "Award-winning burger",
+    "tiktokUrl": "https://www.tiktok.com/@somecreator/video/1234567890123456789",
+    "creator": "@somecreator",
+    "tags": ["burger", "billings"]
+  }
+]
 
