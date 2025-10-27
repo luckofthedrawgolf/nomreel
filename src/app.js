@@ -10,9 +10,18 @@ const cityBadge  = document.getElementById("cityBadge");
 
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+/* ---------- Reliable 100vh on mobile ---------- */
+function setVH(){
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+setVH();
+window.addEventListener("resize", setVH);
+window.addEventListener("orientationchange", setVH);
+
 let allClips = [];
 
-/* ---- robust loader for TikTok embeds ---- */
+/* ---------- Robust TikTok embed loader ---------- */
 function loadTikTokEmbeds(retry = 0){
   try{
     if (window.tiktok && typeof window.tiktok.loadEmbeds === "function"){
@@ -20,10 +29,10 @@ function loadTikTokEmbeds(retry = 0){
       return;
     }
   }catch(_){}
-  if (retry < 12) setTimeout(()=>loadTikTokEmbeds(retry+1), 250);
+  if (retry < 16) setTimeout(()=>loadTikTokEmbeds(retry+1), 200);
 }
 
-/* ---- data ---- */
+/* ---------- Data ---------- */
 async function loadData(){
   try{
     const res = await fetch("./data/videos.json", { cache: "no-store" });
@@ -46,73 +55,87 @@ function filtered(){
   });
 }
 
-/* ---- render ---- */
-function cardTemplate(item){
+/* ---------- Templates ---------- */
+function slideTemplate(item){
   return `
-    <article class="card snap-slide" data-id="${item.id}">
-      <blockquote class="tiktok-embed"
-                  cite="${item.tiktokUrl}"
-                  style="max-width: 605px; min-width: 325px; margin: 0 auto;">
-        <section></section>
-      </blockquote>
+  <section class="slide" data-id="${item.id}">
+    <blockquote class="tiktok-embed"
+                cite="${item.tiktokUrl}"
+                style="max-width: 605px; min-width: 325px;">
+      <section></section>
+    </blockquote>
 
-      <div class="card-body">
-        <div class="meta">
-          <div>
-            <strong>${item.restaurant}</strong> • ${item.city}
-            <div style="color:#b3b3b3;font-size:14px;">${item.title} · ${item.creator}</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <a href="${mapsUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Map</a>
-          <button type="button" data-action="share" data-url="${item.tiktokUrl}">Share</button>
-          <a href="${orderUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Order Online</a>
-          <a href="${reserveUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Reserve Table</a>
-        </div>
+    <div class="info">
+      <div class="meta">
+        <strong>${item.restaurant}</strong> • ${item.city}
+        <div>${item.title} · ${item.creator}</div>
       </div>
-    </article>
-  `;
+      <div class="actions">
+        <a href="${mapsUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Map</a>
+        <button type="button" data-action="share" data-url="${item.tiktokUrl}">Share</button>
+        <a href="${orderUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Order Online</a>
+        <a href="${reserveUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Reserve Table</a>
+      </div>
+    </div>
+  </section>`;
 }
 
+/* ---------- Render + Snap Assist ---------- */
 function render(){
   const list = filtered();
-
   if (cityBadge && citySelect) cityBadge.textContent = `${citySelect.value} • NomReel`;
 
-  feedEl.innerHTML = list.map(cardTemplate).join("");
-
-  loadTikTokEmbeds(); // upgrade blockquotes
+  feedEl.innerHTML = list.map(slideTemplate).join("");
+  loadTikTokEmbeds();
 
   // Share buttons
   feedEl.querySelectorAll('button[data-action="share"]').forEach(btn=>{
     btn.addEventListener("click", ()=>shareClip({ title:"NomReel", url: btn.dataset.url }));
   });
 
-  setupIntersectionControls();
+  // Snap Assist: ensure we end exactly on a slide after scrolling stops
+  snapAssist(feedEl);
 }
 
-/* ---- intersection (slot for future play/pause) ---- */
-function setupIntersectionControls(){
-  const root = feedEl;
-  const slides = [...root.querySelectorAll(".card.snap-slide")];
-  if (!slides.length) return;
+/* Snap to nearest slide after user stops scrolling */
+function snapAssist(container){
+  let snapTimer = null;
 
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if (entry.isIntersecting){
-        loadTikTokEmbeds();
-      }
+  const doSnap = ()=>{
+    const slides = [...container.querySelectorAll(".slide")];
+    if (!slides.length) return;
+
+    const viewportH = container.clientHeight || window.innerHeight;
+    const scrollTop = container.scrollTop;
+
+    // Find nearest slide by center distance
+    let best = { el:null, dist: Infinity };
+    slides.forEach(slide=>{
+      const top = slide.offsetTop;
+      const dist = Math.abs(top - scrollTop);
+      if (dist < best.dist) best = { el: slide, dist };
     });
-  }, { root, threshold: 0.6 });
+    if (best.el){
+      best.el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
-  slides.forEach(s=>io.observe(s));
+  const onScroll = ()=>{
+    if (snapTimer) clearTimeout(snapTimer);
+    snapTimer = setTimeout(doSnap, 90); // small delay after scroll stops
+  };
+
+  container.removeEventListener("scroll", onScroll, { passive:true });
+  container.addEventListener("scroll", onScroll, { passive:true });
+
+  // Also snap on touchend to feel tighter on phones
+  container.addEventListener("touchend", ()=>{ setTimeout(doSnap, 30); }, { passive:true });
 }
 
-/* ---- events ---- */
+/* ---------- Events ---------- */
 citySelect?.addEventListener("change", render);
 searchBtn?.addEventListener("click", render);
 queryInput?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") render(); });
 
-/* ---- init ---- */
+/* ---------- Init ---------- */
 loadData();
