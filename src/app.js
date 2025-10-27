@@ -1,5 +1,4 @@
-// src/app.js  — full replacement
-
+// src/app.js
 import { mapsUrl, orderUrl, reserveUrl, shareClip } from "./utils.js";
 
 const feedEl     = document.getElementById("feed");
@@ -7,39 +6,39 @@ const citySelect = document.getElementById("citySelect");
 const queryInput = document.getElementById("queryInput");
 const searchBtn  = document.getElementById("searchBtn");
 const yearEl     = document.getElementById("year");
-const cityBadge  = document.getElementById("cityBadge"); // optional overlay badge
+const cityBadge  = document.getElementById("cityBadge");
 
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 let allClips = [];
 
-/* ---------------- TikTok embed loader (robust) ---------------- */
-function loadTikTokEmbeds(retry = 0) {
-  try {
-    if (window.tiktok && typeof window.tiktok.loadEmbeds === "function") {
+/* ---- robust loader for TikTok embeds ---- */
+function loadTikTokEmbeds(retry = 0){
+  try{
+    if (window.tiktok && typeof window.tiktok.loadEmbeds === "function"){
       window.tiktok.loadEmbeds();
       return;
     }
-  } catch (_) {}
-  if (retry < 12) setTimeout(() => loadTikTokEmbeds(retry + 1), 250);
+  }catch(_){}
+  if (retry < 12) setTimeout(()=>loadTikTokEmbeds(retry+1), 250);
 }
 
-/* ---------------- Data ---------------- */
-async function loadData() {
-  try {
-    const res = await fetch("/data/videos.json", { cache: "no-store" });
+/* ---- data ---- */
+async function loadData(){
+  try{
+    const res = await fetch("./data/videos.json", { cache: "no-store" });
     allClips = await res.json();
-  } catch (e) {
-    console.error("Failed to load videos.json", e);
+  }catch(err){
+    console.error("videos.json load failed", err);
     allClips = [];
   }
   render();
 }
 
-function filtered() {
+function filtered(){
   const city = (citySelect?.value || "").trim();
   const q = (queryInput?.value || "").trim().toLowerCase();
-  return allClips.filter(item => {
+  return allClips.filter(item=>{
     const cityOk = !city || item.city === city;
     const hay = [item.title, item.restaurant, item.creator, ...(item.tags||[])].join(" ").toLowerCase();
     const qOk = !q || hay.includes(q);
@@ -47,8 +46,8 @@ function filtered() {
   });
 }
 
-/* ---------------- Rendering ---------------- */
-function cardTemplate(item) {
+/* ---- render ---- */
+function cardTemplate(item){
   return `
     <article class="card snap-slide" data-id="${item.id}">
       <blockquote class="tiktok-embed"
@@ -61,9 +60,7 @@ function cardTemplate(item) {
         <div class="meta">
           <div>
             <strong>${item.restaurant}</strong> • ${item.city}
-            <div style="color:#b3b3b3;font-size:14px;">
-              ${item.title} · ${item.creator}
-            </div>
+            <div style="color:#b3b3b3;font-size:14px;">${item.title} · ${item.creator}</div>
           </div>
         </div>
 
@@ -78,57 +75,44 @@ function cardTemplate(item) {
   `;
 }
 
-function render() {
+function render(){
   const list = filtered();
 
-  // Optional fixed badge at top-left
-  if (cityBadge && citySelect) {
-    cityBadge.textContent = `${citySelect.value} • NomReel`;
-  }
+  if (cityBadge && citySelect) cityBadge.textContent = `${citySelect.value} • NomReel`;
 
-  // Build slides (full-viewport snap)
   feedEl.innerHTML = list.map(cardTemplate).join("");
 
-  // Upgrade TikTok blockquotes to embeds
-  loadTikTokEmbeds();
+  loadTikTokEmbeds(); // upgrade blockquotes
 
-  // Hook up Share buttons
-  feedEl.querySelectorAll('button[data-action="share"]').forEach(btn => {
-    btn.addEventListener("click", () =>
-      shareClip({ title: "NomReel", url: btn.dataset.url })
-    );
+  // Share buttons
+  feedEl.querySelectorAll('button[data-action="share"]').forEach(btn=>{
+    btn.addEventListener("click", ()=>shareClip({ title:"NomReel", url: btn.dataset.url }));
   });
 
-  // Light optimization: observe slides (slot for future play/pause if needed)
   setupIntersectionControls();
 }
 
-/* ---------------- Intersection controls ---------------- */
-function setupIntersectionControls() {
+/* ---- intersection (slot for future play/pause) ---- */
+function setupIntersectionControls(){
   const root = feedEl;
   const slides = [...root.querySelectorAll(".card.snap-slide")];
   if (!slides.length) return;
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      // If you later swap to native <video>, this is where you'd play/pause.
-      // With TikTok embeds we can't programmatically control playback.
-      // We keep this observer for future enhancements & perf tweaks.
-      if (entry.isIntersecting) {
-        // ensure embed exists/loaded
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if (entry.isIntersecting){
         loadTikTokEmbeds();
       }
     });
   }, { root, threshold: 0.6 });
 
-  slides.forEach(s => io.observe(s));
+  slides.forEach(s=>io.observe(s));
 }
 
-/* ---------------- Events ---------------- */
+/* ---- events ---- */
 citySelect?.addEventListener("change", render);
 searchBtn?.addEventListener("click", render);
-queryInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") render(); });
+queryInput?.addEventListener("keydown", (e)=>{ if (e.key === "Enter") render(); });
 
-/* ---------------- Init ---------------- */
+/* ---- init ---- */
 loadData();
-
