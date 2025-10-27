@@ -1,5 +1,23 @@
 [
   {
+    "id": "bil-1",
+    "city": "Billings",
+    "restaurant": "The Burger Dive",
+    "title": "Award-winning burger",
+    "tiktokUrl": "https://www.tiktok.com/@foodinsider/video/6718335390845095173",
+    "creator": "@foodinsider",
+    "tags": ["burger","billings"]
+  },
+  {
+    "id": "bil-2",
+    "city": "Billings",
+    "restaurant": "Montana Brewing Co.",
+    "title": "Brick-oven pie you'll crave",
+    "tiktokUrl": "https://www.tiktok.com/@tastemade/video/6800111626548790533",
+    "creator": "@tastemade",
+    "tags": ["pizza","billings"]
+  },
+  {
     "id": "den-1",
     "city": "Denver",
     "restaurant": "Smok Barbecue",
@@ -7,14 +25,5 @@
     "tiktokUrl": "https://www.tiktok.com/@blondeswhoeat/video/7469144267508780330",
     "creator": "@blondeswhoeat",
     "tags": ["breakfast","burrito","bbq"]
-  },
-  {
-    "id": "bil-1",
-    "city": "Billings",
-    "restaurant": "The Burger Dive",
-    "title": "Award-winning burger",
-    "tiktokUrl": "https://www.tiktok.com/@somecreator/video/7234567890123456789",
-    "creator": "@somecreator",
-    "tags": ["burger","billings"]
   }
 ]
