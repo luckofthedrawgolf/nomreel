@@ -15,5 +15,3 @@ export function shareClip({ title, url }){
   navigator.clipboard.writeText(url).catch(()=>{});
   alert("Link copied.");
 }
-
-
