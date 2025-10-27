@@ -1,52 +1,87 @@
 :root{
-  --bg:#0f0f0f;--panel:#1a1a1a;--text:#eaeaea;--muted:#b3b3b3;--accent:#ff4d2e;
-  --radius:14px;--shadow:0 10px 30px rgba(0,0,0,.35)
+  --bg:#0b0b0b; --text:#ececec; --muted:#b6b6b6; --accent:#ff4d2e;
+  --card:#111; --border:#222; --radius:14px;
+  --vh: 1vh; /* will be set via JS for mobile accuracy */
 }
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-.site-header{padding:28px 20px 6px;max-width:1100px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:28px;height:28px}
-.wordmark{font-weight:700;letter-spacing:.3px}
-.wordmark .accent{color:var(--accent)}
-.tagline{color:var(--muted);margin:8px 2px 0}
-.searchbar{padding:18px 20px 8px;max-width:1100px;margin:0 auto}
-.controls{display:flex;flex-wrap:wrap;gap:10px}
-select,input[type="search"]{
-  background:#1f1f1f;color:var(--text);border:1px solid #2a2a2a;border-radius:10px;padding:12px 14px;outline:none;flex:1 1 240px
-}
-button#searchBtn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}
-button#searchBtn:hover{filter:brightness(1.05)}
-.site-footer{padding:20px;text-align:center;color:var(--muted)}
+html,body{height:100%}
+body{touch-action:pan-y; overscroll-behavior-y:none}
 
-/* ===== TikTok-like snap scroll ===== */
-html,body{height:100%;overscroll-behavior-y:none}
-body{touch-action:pan-y}
-.snap-container{
-  height:100vh;overflow-y:scroll;-webkit-overflow-scrolling:touch;
-  scroll-snap-type:y mandatory;scroll-behavior:smooth;background:var(--bg)
-}
-.card{
-  background:var(--panel);border:1px solid #262626;border-radius:var(--radius);
-  box-shadow:var(--shadow);overflow:hidden
-}
-.card.snap-slide{
-  height:100vh;scroll-snap-align:start;border-radius:0;border:0;margin:0;
-  display:flex;align-items:center;justify-content:center;background:var(--bg);box-shadow:none
-}
-.card .tiktok-embed{width:100%;max-width:480px;min-width:320px}
-.card .card-body{width:100%;max-width:480px;margin:8px auto 18px;padding:0 10px}
-.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px;color:var(--muted);font-size:14px}
-.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-.actions button,.actions a{
-  display:inline-block;text-align:center;padding:10px 8px;border-radius:10px;border:1px solid #333;
-  background:#1b1b1b;color:var(--text);text-decoration:none;font-weight:600
-}
-.actions button:hover,.actions a:hover{border-color:#444}
-@media (max-width:640px){.actions{grid-template-columns:repeat(2,1fr)}}
-
-/* City badge */
+/* ===== Overlay UI (doesn't consume lane height) ===== */
 .city-badge{
-  position:fixed;top:10px;left:12px;z-index:30;background:rgba(0,0,0,.55);
-  color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid #222
+  position:fixed; top:10px; left:12px; z-index:30;
+  background:rgba(0,0,0,.55); color:#fff; padding:6px 10px;
+  border:1px solid #222; border-radius:999px; font-size:12px; pointer-events:none;
 }
+.controls-overlay{
+  position:fixed; top:12px; right:12px; z-index:40; display:flex; gap:6px;
+  background:rgba(0,0,0,.45); backdrop-filter: blur(4px);
+  border:1px solid #222; padding:6px; border-radius:12px;
+}
+.controls-overlay select,
+.controls-overlay input{
+  background:#161616; color:var(--text); border:1px solid #2a2a2a; border-radius:10px; padding:8px 10px; outline:none;
+}
+.controls-overlay button{
+  background:var(--accent); color:#fff; border:0; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer;
+}
+.controls-overlay button:hover{ filter:brightness(1.05) }
+
+/* ===== True TikTok-style snap stack ===== */
+.snap-container{
+  height:calc(var(--vh) * 100);              /* reliable 100vh on mobile */
+  overflow-y:scroll;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
+  background:var(--bg);
+}
+
+/* A slide = exactly one viewport */
+.slide{
+  height:calc(var(--vh) * 100);
+  scroll-snap-align:start;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  margin:0; border:0; background:var(--bg);
+}
+
+/* TikTok blockquote container sizing */
+.slide .tiktok-embed{
+  width:100%;
+  max-width:480px;
+  min-width:320px;
+  margin:0 auto;
+}
+
+/* Info & action bar below each video */
+.info{
+  width:100%;
+  max-width:480px;
+  margin:10px auto 18px;
+  padding:0 10px;
+}
+.meta{color:var(--muted); font-size:14px; margin-bottom:8px}
+.meta strong{color:var(--text)}
+
+.actions{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+}
+.actions a, .actions button{
+  display:inline-block; text-align:center; padding:10px 8px;
+  border-radius:10px; border:1px solid var(--border);
+  background:#141414; color:var(--text); text-decoration:none; font-weight:600;
+}
+.actions a:hover, .actions button:hover{ border-color:#333 }
+
+@media (max-width:640px){
+  .actions{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* Footer (out of band) */
+.site-footer{
+  position:fixed; bottom:8px; left:0; right:0; text-align:center; z-index:10;
+  color:#9a9a9a; font-size:12px; pointer-events:none;
+}
+.site-footer span{ pointer-events:auto }
