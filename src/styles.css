@@ -84,3 +84,72 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   color:#9a9a9a; font-size:12px; pointer-events:none;
 }
 .site-footer span{ pointer-events:auto }
+
+
+
+/* === Polished, mobile-first floating header (safe override) === */
+.controls-overlay{
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+
+  /* glass look that sits nicely over video */
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.25);
+}
+
+/* inputs match the dark theme and are finger-friendly */
+.controls-overlay select,
+.controls-overlay input{
+  appearance: none;
+  background:#161616;
+  color: var(--text);
+  border:1px solid #2a2a2a;
+  border-radius:10px;
+  height:36px;
+  padding:0 10px;
+  font-size:14px;
+  outline:none;
+}
+
+/* mobile-first widths (scale nicely across phones) */
+.controls-overlay select{ max-width:34vw; min-width:92px; }
+.controls-overlay input{  width:52vw; min-width:140px; max-width:380px; }
+
+/* keep your orange Search button, styled to match */
+.controls-overlay button{
+  height:36px;
+  padding:0 14px;
+  border:1px solid #2a2a2a;
+  border-radius:10px;
+  background: linear-gradient(180deg, var(--accent), #e64428);
+  color:#fff; font-weight:700; letter-spacing:.2px;
+  cursor:pointer;
+}
+.controls-overlay button:hover{ filter:brightness(1.06); }
+.controls-overlay button:active{ transform: translateY(1px); }
+
+/* very small phones: tighten slightly */
+@media (max-width: 360px){
+  .controls-overlay{ gap:6px; padding:5px 7px; }
+  .controls-overlay input{ width:46vw; min-width:120px; font-size:13px; }
+  .controls-overlay select{ max-width:30vw; }
+  .controls-overlay button{ height:32px; padding:0 10px; font-size:13px; }
+}
+
+/* tablets/desktop: give the input more breathing room */
+@media (min-width: 768px){
+  .controls-overlay input{ width:360px; }
+  .controls-overlay select{ max-width:160px; }
+  .controls-overlay button{ padding:0 16px; }
+}
