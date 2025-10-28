@@ -30,17 +30,17 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   box-shadow: 0 6px 18px rgba(0,0,0,0.45);
   backdrop-filter: blur(12px);   /* stronger, smoother blur */
   border:1px solid rgba(255,255,255,0.12);
-  border-radius:14px;
-  padding:6px 10px;
+  border-radius:12px;
+  padding:4px 8px;
 }
 
 /* Unified clean sizing */
 .controls-overlay select,
 .controls-overlay input,
 .controls-overlay button {
-  height: 34px;
+  height: 30px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* City dropdown */
@@ -55,6 +55,9 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   width: 160px;
   max-width: 45vw;
   padding: 0 10px;
+}
+.controls-overlay input::placeholder {
+  color: #bfbfbf;
 }
 
 /* Search button — keep your orange style */
