@@ -1,12 +1,13 @@
 // src/app.js
 import { mapsUrl, orderUrl, reserveUrl, shareClip } from "./utils.js";
 
-const feedEl     = document.getElementById("feed");
-const citySelect = document.getElementById("citySelect");
-const queryInput = document.getElementById("queryInput");
-const searchBtn  = document.getElementById("searchBtn");
-const yearEl     = document.getElementById("year");
-const cityBadge  = document.getElementById("cityBadge");
+/* ---------- DOM ---------- */
+const feedEl      = document.getElementById("feed");
+const citySelect  = document.getElementById("citySelect");
+const queryInput  = document.getElementById("queryInput");
+const searchBtn   = document.getElementById("searchBtn");
+const yearEl      = document.getElementById("year");
+const cityBadge   = document.getElementById("cityBadge");
 
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -19,20 +20,9 @@ setVH();
 window.addEventListener("resize", setVH);
 window.addEventListener("orientationchange", setVH);
 
+/* ---------- Data ---------- */
 let allClips = [];
 
-/* ---------- Robust TikTok embed loader ---------- */
-function loadTikTokEmbeds(retry = 0){
-  try{
-    if (window.tiktok && typeof window.tiktok.loadEmbeds === "function"){
-      window.tiktok.loadEmbeds();
-      return;
-    }
-  }catch(_){}
-  if (retry < 16) setTimeout(()=>loadTikTokEmbeds(retry+1), 200);
-}
-
-/* ---------- Data ---------- */
 async function loadData(){
   try{
     const res = await fetch("./data/videos.json", { cache: "no-store" });
@@ -44,92 +34,103 @@ async function loadData(){
   render();
 }
 
+/* ---------- Helpers ---------- */
 function filtered(){
   const city = (citySelect?.value || "").trim();
-  const q = (queryInput?.value || "").trim().toLowerCase();
+  const q    = (queryInput?.value || "").trim().toLowerCase();
+
   return allClips.filter(item=>{
     const cityOk = !city || item.city === city;
-    const hay = [item.title, item.restaurant, item.creator, ...(item.tags||[])].join(" ").toLowerCase();
-    const qOk = !q || hay.includes(q);
+    const hay    = [item.title, item.restaurant, item.creator, ...(item.tags||[])].join(" ").toLowerCase();
+    const qOk    = !q || hay.includes(q);
     return cityOk && qOk;
   });
 }
 
 /* ---------- Templates ---------- */
 function slideTemplate(item){
-  return `
-  <section class="slide" data-id="${item.id}">
-    <blockquote class="tiktok-embed"
-                cite="${item.tiktokUrl}"
-                style="max-width: 605px; min-width: 325px;">
-      <section></section>
-    </blockquote>
+  // Extract numeric TikTok ID from any pasted URL form
+  const id  = (item.tiktokUrl || "").match(/video\/(\d{10,})/)?.[1] || "";
+  const src = id ? `https://www.tiktok.com/embed/v2/${id}` : "";
 
-    <div class="info">
-      <div class="meta">
-        <strong>${item.restaurant}</strong> • ${item.city}
-        <div>${item.title} · ${item.creator}</div>
-      </div>
-      <div class="actions">
-        <a href="${mapsUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Map</a>
-        <button type="button" data-action="share" data-url="${item.tiktokUrl}">Share</button>
-        <a href="${orderUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Order Online</a>
-        <a href="${reserveUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Reserve Table</a>
-      </div>
+  return `
+<section class="slide" data-id="${item.id}">
+  <div class="tiktok-embed" style="max-width: 605px; min-width: 325px;">
+    ${src ? `
+    <iframe
+      src="${src}"
+      style="position:relative;width:100%;height:100%;aspect-ratio:9/16;border:0;"
+      allow="encrypted-media; fullscreen; picture-in-picture"
+      allowfullscreen
+      scrolling="no"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>` : `
+    <div style="padding:12px;text-align:center;border:1px solid var(--border);border-radius:10px;">
+      Invalid or missing TikTok link
+    </div>`}
+  </div>
+
+  <div class="info">
+    <div class="meta">
+      <strong>${item.restaurant}</strong> • ${item.city}
+      <div>${item.title} • ${item.creator}</div>
     </div>
-  </section>`;
+    <div class="actions">
+      <a href="${mapsUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Map</a>
+      <button type="button" data-action="share" data-url="${item.tiktokUrl}">Share</button>
+      <a href="${orderUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Order Online</a>
+      <a href="${reserveUrl(item.restaurant, item.city)}" target="_blank" rel="noopener">Reserve Table</a>
+    </div>
+  </div>
+</section>`;
 }
 
 /* ---------- Render + Snap Assist ---------- */
 function render(){
   const list = filtered();
-  if (cityBadge && citySelect) cityBadge.textContent = `${citySelect.value} • NomReel`;
+  if (cityBadge && citySelect) cityBadge.textContent = `${citySelect.value || ""} • NomReel`;
 
   feedEl.innerHTML = list.map(slideTemplate).join("");
-  loadTikTokEmbeds();
 
   // Share buttons
   feedEl.querySelectorAll('button[data-action="share"]').forEach(btn=>{
     btn.addEventListener("click", ()=>shareClip({ title:"NomReel", url: btn.dataset.url }));
   });
 
-  // Snap Assist: ensure we end exactly on a slide after scrolling stops
+  // Snap assist: ensure we end exactly on a slide after scrolling stops
   snapAssist(feedEl);
 }
 
-/* Snap to nearest slide after user stops scrolling */
+/* Attach-once snap assist (prevents duplicate listeners across renders) */
+const SNAP_HANDLERS = new WeakMap();
 function snapAssist(container){
-  let snapTimer = null;
+  if (!container || SNAP_HANDLERS.has(container)) return;
 
-  const doSnap = ()=>{
+  const doSnap = () => {
     const slides = [...container.querySelectorAll(".slide")];
     if (!slides.length) return;
 
-    const viewportH = container.clientHeight || window.innerHeight;
     const scrollTop = container.scrollTop;
-
-    // Find nearest slide by center distance
     let best = { el:null, dist: Infinity };
+
     slides.forEach(slide=>{
-      const top = slide.offsetTop;
+      const top  = slide.offsetTop;
       const dist = Math.abs(top - scrollTop);
       if (dist < best.dist) best = { el: slide, dist };
     });
-    if (best.el){
-      best.el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+
+    if (best.el) best.el.scrollIntoView({ behavior:"smooth", block:"start" });
   };
 
-  const onScroll = ()=>{
-    if (snapTimer) clearTimeout(snapTimer);
-    snapTimer = setTimeout(doSnap, 90); // small delay after scroll stops
-  };
+  let snapTimer = null;
+  const onScroll   = () => { if (snapTimer) clearTimeout(snapTimer); snapTimer = setTimeout(doSnap, 90); };
+  const onTouchEnd = () => { setTimeout(doSnap, 30); };
 
-  container.removeEventListener("scroll", onScroll, { passive:true });
-  container.addEventListener("scroll", onScroll, { passive:true });
+  container.addEventListener("scroll",   onScroll,   { passive:true });
+  container.addEventListener("touchend", onTouchEnd, { passive:true });
 
-  // Also snap on touchend to feel tighter on phones
-  container.addEventListener("touchend", ()=>{ setTimeout(doSnap, 30); }, { passive:true });
+  SNAP_HANDLERS.set(container, { onScroll, onTouchEnd });
 }
 
 /* ---------- Events ---------- */
