@@ -55,21 +55,11 @@ function slideTemplate(item){
 
   return `
 <section class="slide" data-id="${item.id}">
-  <div class="tiktok-embed" style="max-width: 605px; min-width: 325px;">
-    ${src ? `
-    <iframe
-      src="${src}"
-      style="position:relative;width:100%;height:100%;aspect-ratio:9/16;border:0;"
-      allow="encrypted-media; fullscreen; picture-in-picture"
-      allowfullscreen
-      scrolling="no"
-      loading="lazy"
-      referrerpolicy="strict-origin-when-cross-origin">
-    </iframe>` : `
-    <div style="padding:12px;text-align:center;border:1px solid var(--border);border-radius:10px;">
-      Invalid or missing TikTok link
-    </div>`}
-  </div>
+  <div class="tiktok-embed"
+     data-src="${src}"
+     style="max-width: 605px; min-width: 325px; aspect-ratio: 9/16;">
+  <!-- iframe mounts only when the slide is visible -->
+</div>
 
   <div class="info">
     <div class="meta">
