@@ -156,13 +156,13 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
 /* Footer (copyright) — more breathing room */
 .site-footer{
   position: fixed;
-  bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  bottom: max(18px, env(safe-area-inset-bottom, 18px));
   left: 0;
   right: 0;
   text-align: center;
   z-index: 10;
   color: #9a9a9a;
-  font-size: 12px;
+  font-size: 11.5px;
   pointer-events: none;
 }
 .site-footer span{ pointer-events:auto; }
