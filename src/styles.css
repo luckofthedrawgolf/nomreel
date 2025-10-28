@@ -60,17 +60,26 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   color: #bfbfbf;
 }
 
-/* Search button — keep your orange style */
+/* Search button — subtle glass style */
 .controls-overlay button {
-  background: var(--accent);
+  background: rgba(255,255,255,0.12);
   color: #fff;
-  border: 0;
+  border: 1px solid rgba(255,255,255,0.25);
   padding: 0 14px;
-  font-weight: 700;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  backdrop-filter: blur(8px);
 }
-.controls-overlay button:hover { filter: brightness(1.06); }
-.controls-overlay button:active { transform: translateY(1px); }
+
+.controls-overlay button:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+.controls-overlay button:active {
+  transform: translateY(1px);
+}
+
 
 
 /* ===== True TikTok-style snap stack ===== */
