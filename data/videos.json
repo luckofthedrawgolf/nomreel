@@ -35,7 +35,34 @@
   "creator": "@visitbillingsmt",
   "tags": ["walkers", "fine dining", "billings", "montana", "james beard","steak"]
 },
- {
+  {
+  "id": "bil-5",
+  "city": "Billings",
+  "restaurant": "Topz Sandwich Company",
+  "title": "Topz Sandwich Company • Billings Montana",
+  "tiktokUrl": "https://www.tiktok.com/@beyondtheboxinc/video/7368604904602402807",
+  "creator": "@beyondtheboxinc",
+  "tags": ["topz", "sandwich", "billings", "montana", "lunch", "local", "food"]
+},
+  {
+  "id": "bil-6",
+  "city": "Billings",
+  "restaurant": "Santera",
+  "title": "Santera Mexican Restaurant • Billings Montana",
+  "tiktokUrl": "https://www.tiktok.com/@the.frostfam/video/7500054668282711342",
+  "creator": "@the.frostfam",
+  "tags": ["santera", "mexican", "billings", "restaurant", "food", "montana", "review"]
+},
+  {
+  "id": "bil-7",
+  "city": "Billings",
+  "restaurant": "King's Hat",
+  "title": "King's Hat in Billings is 10/10",
+  "tiktokUrl": "https://www.tiktok.com/@marykateteske/video/7321494308010364203",
+  "creator": "@marykateteske",
+  "tags": ["kings hat", "billings", "montana", "burger", "local", "classic", "drive-thru", "food"]
+ },
+  {
     "id": "den-1",
     "city": "Denver",
     "restaurant": "Smok Barbecue",
