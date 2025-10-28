@@ -132,6 +132,39 @@ function snapAssist(container){
 
   SNAP_HANDLERS.set(container, { onScroll, onTouchEnd });
 }
+/* ----------- Auto stop videos when off-screen ----------- */
+function mountIframe(box){
+  if (box.dataset.mounted || !box.dataset.src) return;
+  box.innerHTML = `
+    <iframe
+      src="${box.dataset.src}"
+      style="width:100%;height:100%;border:0;"
+      allow="encrypted-media; fullscreen; picture-in-picture"
+      allowfullscreen
+      scrolling="no"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>`;
+  box.dataset.mounted = "1";
+}
+
+function unmountIframe(box){
+  if (!box.dataset.mounted) return;
+  box.innerHTML = "";          // removes iframe → stops audio
+  box.dataset.mounted = "";
+}
+
+// Watch which video is visible
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const box = entry.target;
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.6){
+      mountIframe(box);
+    } else {
+      unmountIframe(box);
+    }
+  });
+}, { root: feedEl, threshold: [0.4, 0.6] });
 
 /* ---------- Events ---------- */
 citySelect?.addEventListener("change", render);
