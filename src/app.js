@@ -92,7 +92,8 @@ function render(){
   if (cityBadge && citySelect) cityBadge.textContent = `${citySelect.value || ""} • NomReel`;
 
   feedEl.innerHTML = list.map(slideTemplate).join("");
-
+  feedEl.querySelectorAll(".tiktok-embed").forEach(box => io.observe(box));
+ 
   // Share buttons
   feedEl.querySelectorAll('button[data-action="share"]').forEach(btn=>{
     btn.addEventListener("click", ()=>shareClip({ title:"NomReel", url: btn.dataset.url }));
