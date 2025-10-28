@@ -1,9 +1,3 @@
-// TEMP: hard reset any old service worker & caches causing stale loads
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
-}
-if (window.caches) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-
 // src/app.js
 import { mapsUrl, orderUrl, reserveUrl, shareClip } from "./utils.js";
 
