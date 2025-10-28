@@ -33,14 +33,41 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   padding:6px 10px;
 }
 
+/* Unified clean sizing */
 .controls-overlay select,
-.controls-overlay input{
-  background:#161616; color:var(--text); border:1px solid #2a2a2a; border-radius:10px; padding:8px 10px; outline:none;
+.controls-overlay input,
+.controls-overlay button {
+  height: 34px;
+  border-radius: 10px;
+  font-size: 14px;
 }
-.controls-overlay button{
-  background:var(--accent); color:#fff; border:0; border-radius:10px; padding:8px 12px; font-weight:700; cursor:pointer;
+
+/* City dropdown */
+.controls-overlay select {
+  min-width: 95px;
+  max-width: 120px;
+  padding: 0 8px;
 }
-.controls-overlay button:hover{ filter:brightness(1.05) }
+
+/* Search input — responsive width */
+.controls-overlay input {
+  width: 160px;
+  max-width: 45vw;
+  padding: 0 10px;
+}
+
+/* Search button — keep your orange style */
+.controls-overlay button {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  padding: 0 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.controls-overlay button:hover { filter: brightness(1.06); }
+.controls-overlay button:active { transform: translateY(1px); }
+
 
 /* ===== True TikTok-style snap stack ===== */
 .snap-container{
