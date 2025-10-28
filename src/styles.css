@@ -26,7 +26,8 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   gap:8px;
   align-items:center;
 
-  background:rgba(0,0,0,0.55);
+  background:rgba(0,0,0,0.72); /* cleaner, richer, more “app” */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
   backdrop-filter: blur(12px);   /* stronger, smoother blur */
   border:1px solid rgba(255,255,255,0.12);
   border-radius:14px;
