@@ -62,13 +62,13 @@
   "creator": "@marykateteske",
   "tags": ["kings hat", "billings", "montana", "burger", "local", "classic", "drive-thru", "food"]
  },
-  {
-    "id": "den-1",
-    "city": "Denver",
-    "restaurant": "Smok Barbecue",
-    "title": "Insane breakfast burrito",
-    "tiktokUrl": "https://www.tiktok.com/@blondeswhoeat/video/7469144267508780330",
-    "creator": "@blondeswhoeat",
-    "tags": ["breakfast","burrito","bbq"]
-  }
-]
+ {
+  "id": "bil-8",
+  "city": "Billings",
+  "restaurant": "Rib & Chop House",
+  "title": "Rib & Chop House (Billings, MT)",
+  "tiktokUrl": "https://www.tiktok.com/@iamjuliencesario/video/7548946923210706206",
+  "creator": "@iamjuliencesario",
+  "tags": ["steakhouse", "billings", "montana", "food", "ribandchophouse"]
+},
+
