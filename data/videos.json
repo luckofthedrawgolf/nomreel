@@ -62,4 +62,14 @@
   "creator": "@marykateteske",
   "tags": ["kings hat", "billings", "montana", "burger", "local", "classic", "drive-thru", "food"]
  },
-  
+  {
+    "id": "den-1",
+    "city": "Denver",
+    "restaurant": "Smok Barbecue",
+    "title": "Insane breakfast burrito",
+    "tiktokUrl": "https://www.tiktok.com/@blondeswhoeat/video/7469144267508780330",
+    "creator": "@blondeswhoeat",
+    "tags": ["breakfast","burrito","bbq"]
+  }
+]
+
