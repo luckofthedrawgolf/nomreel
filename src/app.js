@@ -1,3 +1,5 @@
+const ENABLE_AUTOPLAY = true;  // set to false to instantly roll back
+
 // src/app.js
 import { mapsUrl, orderUrl, reserveUrl, shareClip } from "./utils.js";
 
@@ -46,12 +48,26 @@ function filtered(){
     return cityOk && qOk;
   });
 }
+// Build TikTok iframe URL with safe autoplay (muted)
+function buildTikTokSrc(raw) {
+  if (!raw) return "";
+  let src = String(raw).trim();
+
+  // Only touch TikTok URLs, and only if our kill switch is on
+  if (ENABLE_AUTOPLAY && /tiktok\.com/.test(src)) {
+    src += (src.includes("?") ? "&" : "?") + "autoplay=1&mute=1";
+  }
+  return src;
+}
+
 
 /* ---------- Templates ---------- */
 function slideTemplate(item){
   // Extract numeric TikTok ID from any pasted URL form
-  const id  = (item.tiktokUrl || "").match(/video\/(\d{10,})/)?.[1] || "";
-  const src = id ? `https://www.tiktok.com/embed/v2/${id}` : "";
+const id  = (item.tiktokUrl || "").match(/video\/(\d{10,})/)?.[1] || "";
+const raw = id ? `https://www.tiktok.com/embed/v2/${id}` : (item.tiktokUrl || "");
+const src = buildTikTokSrc(raw);
+
 
   return `
 <section class="slide" data-id="${item.id}">
@@ -130,7 +146,7 @@ function mountIframe(box){
     <iframe
       src="${box.dataset.src}"
       style="width:100%;height:100%;border:0;"
-      allow="encrypted-media; fullscreen; picture-in-picture"
+      allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
       allowfullscreen
       scrolling="no"
       loading="lazy"
