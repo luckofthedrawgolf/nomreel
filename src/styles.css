@@ -107,36 +107,62 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   margin:0 auto;
 }
 
-/* Info & action bar below each video */
+/* Info & action bar below each video — polished & slimmer */
 .info{
   width:100%;
-  max-width:480px;
-  margin:10px auto 18px;
+  max-width:520px;
+  margin:8px auto 12px;        /* tighter */
   padding:0 10px;
 }
-.meta{color:var(--muted); font-size:14px; margin-bottom:8px}
-.meta strong{color:var(--text)}
+.meta{ color:var(--muted); font-size:13px; margin-bottom:8px; }
+.meta strong{ color:var(--text); }
 
+/* Button grid (unchanged layout, just centered & cleaner) */
 .actions{
-  display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);  /* 4 across on wide screens */
+  gap:10px;
+  max-width:520px;
+  margin:0 auto 12px;                     /* center the grid block */
 }
-.actions a, .actions button{
-  display:inline-block; text-align:center; padding:10px 8px;
-  border-radius:10px; border:1px solid var(--border);
-  background:#141414; color:var(--text); text-decoration:none; font-weight:600;
-}
-.actions a:hover, .actions button:hover{ border-color:#333 }
-
 @media (max-width:640px){
-  .actions{ grid-template-columns:repeat(2,1fr); }
+  .actions{ grid-template-columns: repeat(2, 1fr); }  /* 2x2 on mobile */
 }
 
-/* Footer (out of band) */
+/* Buttons: slimmer, glassy cards */
+.actions a,
+.actions button{
+  display:inline-block;
+  text-align:center;
+  padding:8px 10px;              /* slimmer than before */
+  height:38px;                   /* compact */
+  font-size:13.5px;
+  font-weight:600;
+  text-decoration:none;
+  border-radius:12px;
+
+  /* subtle glass style */
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.actions a:hover,
+.actions button:hover{
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.20);
+}
+
+/* Footer (copyright) — more breathing room */
 .site-footer{
-  position:fixed; bottom:8px; left:0; right:0; text-align:center; z-index:10;
-  color:#9a9a9a; font-size:12px; pointer-events:none;
+  position: fixed;
+  bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+  color: #9a9a9a;
+  font-size: 12px;
+  pointer-events: none;
 }
-.site-footer span{ pointer-events:auto }
-
-
-
+.site-footer span{ pointer-events:auto; }
