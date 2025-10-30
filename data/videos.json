@@ -63,6 +63,42 @@
   "tags": ["kings hat", "billings", "montana", "burger", "local", "classic", "drive-thru", "food"]
  },
   {
+  "id": "bil-8",
+  "city": "Billings",
+  "restaurant": "Copper Onion Bistro",
+  "title": "Copper Onion Bistro • Billings, MT",
+  "tiktokUrl": "https://www.tiktok.com/@justbeing.si/video/7530063865526361270",
+  "creator": "@justbeing.si",
+  "tags": ["copper onion", "billings", "montana", "bistro", "lunch", "restaurant", "food", "local"]
+},
+  {
+  "id": "bil-9",
+  "city": "Billings",
+  "restaurant": "Diamond X",
+  "title": "Diamond X • Billings, Montana",
+  "tiktokUrl": "https://www.tiktok.com/@bamabama_dingdong/video/7505133248465374507",
+  "creator": "@bamabama_dingdong",
+  "tags": ["diamond x", "billings", "bar", "grill", "patio", "montana", "food"]
+},
+ {
+  "id": "bil-10",
+  "city": "Billings",
+  "restaurant": "Fuddruckers",
+  "title": "Fuddruckers • Billings, Montana",
+  "tiktokUrl": "https://www.tiktok.com/@bamabama_dingdong/video/7137810783055990058",
+  "creator": "@bamabama_dingdong",
+  "tags": ["fuddruckers", "billings", "burger", "montana", "food"]
+},
+{
+  "id": "bil-11",
+  "city": "Billings",
+  "restaurant": "Five on Black",
+  "title": "Five on Black • Billings, Montana",
+  "tiktokUrl": "https://www.tiktok.com/@bamabama_dingdong/video/7439840282725715230",
+  "creator": "@bamabama_dingdong",
+  "tags": ["five on black", "brazilian", "bowl", "billings", "montana", "food"]
+},
+  {
     "id": "den-1",
     "city": "Denver",
     "restaurant": "Smok Barbecue",
