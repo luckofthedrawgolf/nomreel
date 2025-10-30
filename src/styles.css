@@ -166,3 +166,62 @@ body{touch-action:pan-y; overscroll-behavior-y:none}
   pointer-events: none;
 }
 .site-footer span{ pointer-events:auto; }
+
+/* ---- Map Sheet DELETE THIS IS SITE FAILS ---- */
+.map-sheet{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 60vh;
+  transform: translateY(100%);
+  transition: transform 220ms ease;
+  z-index: 60; /* below your controls overlay (40)? raise if needed */
+  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.65);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display: grid;
+  place-items: stretch;
+}
+.map-sheet.open{ transform: translateY(0); }
+
+.map-sheet__inner{
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  padding: 12px;
+}
+
+.map-sheet__handle{
+  width: 48px; height: 5px; border-radius: 999px;
+  background: rgba(255,255,255,0.28);
+  justify-self: center; margin-top: 6px;
+}
+
+.map-sheet__title{
+  display: flex; align-items: center; justify-content: space-between;
+  color: #fff; font-weight: 700; letter-spacing: .2px;
+}
+
+.map-sheet__close{
+  background: transparent; border: 0; color:#fff; font-size: 18px;
+  width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+}
+.map-sheet__close:hover{ background: rgba(255,255,255,0.08); }
+
+.map-sheet__mapwrap{
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  min-height: 220px;
+}
+
+.map-sheet__actions{
+  display: flex; gap: 8px; justify-content: center; padding-bottom: 6px;
+}
+
+.map-btn{
+  display: inline-flex; align-items:center; justify-content:center;
+  padding: 10px 14px; border-radius: 10px; font-weight: 700; text-decoration: none;
+  background: var(--accent, #ff6a00); color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.map-btn:hover{ filter: brightness(1.05); }
+
